@@ -9,10 +9,10 @@ import Image from "next/image";
 
 const Login = () => {
     const { data: session } = useSession();
-    if (session) {
-       const router = useRouter();
-       router.push('/home')
-      }
+    // if (session) {
+    //    const router = useRouter();
+    //    router.push('/home')
+    //   }
   return (
     <>
       <div className="w-screen h-screen bg-yellow-100 flex items-center justify-center">
