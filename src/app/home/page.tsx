@@ -6,9 +6,7 @@ import { useSession, signIn, signOut } from "next-auth/react"
 const Home = () => {
   const { data: session } = useSession();
   console.log(session)
-  const username = session?.user?.name.split(" ")[0] ?? "Guest";
-
-  
+  const username = session?.user?.name ? session.user.name.split(" ")[0] : "Guest";
   return (
     <>
       <Navbar username={username} />
