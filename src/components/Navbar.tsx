@@ -29,6 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
 
   const handleLogout = () => {
     signOut();
+    router.push("/");
   };
   const handleLogin = () => {
     router.push("/");

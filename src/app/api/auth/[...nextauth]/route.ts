@@ -17,51 +17,42 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ account, profile, email, user }) {
-      if (account?.provider === "github") {
+    async signIn({ user, account, profile, email, credentials }: any) {
+      if (account?.provider === "github" || account?.provider === "google") {
         try {
-          // Connect to MongoDB
-          await mongoose.connect(process.env.MONGODB_URI as string)
-          console.log(process.env.MONGODB_URI as string);
+          // Connect to the DB
+          const client = await mongoose.connect(process.env.MONGODB_URI as string);
+          console.log("DB Connected");
           
-          console.log("Connected to MongoDB");
-
-          // Check if email exists and is a string
-          if (typeof email === "string") {
-            const currentUser = await User.findOne({ email });
-
-            // If user doesn't exist, create a new user
-            if (!currentUser) {
-              const username = email.split("@")[0];
-              const newUser = new User({
-                email: email,
-                name: profile?.name || "",
-                username: username || "",
-              });
-              await newUser.save();
-              console.log("New user created:", newUser);
-              user.name = newUser.username;
-            } else {
-              console.log("User already exists:", currentUser);
-              user.name = currentUser.username;
-            }
+  
+          // Find the user in the database
+          const currentUser = await User.findOne({ email: email });
+          console.log("currentUser",currentUser);
+          
+  
+          // If user doesn't exist, create a new user
+          if (!currentUser) {
+            const newUser = new User({
+              email: email,
+              username: email.split("@")[0],
+            });
+            await newUser.save();
+            user.name = newUser.username;
           } else {
-            console.error("Email is missing or invalid.");
-            return false; // Return false to prevent sign in
+            // If user exists, set user name
+            user.name = currentUser.username;
           }
         } catch (error) {
-          console.error("Error connecting to MongoDB:", error);
-          return false; // Return false to prevent sign in
-        } finally {
-          // Disconnect from MongoDB after operation
-          await mongoose.disconnect();
-          console.log("Disconnected from MongoDB");
+          // Handle error
+          console.log("Error with DB");
+          
+          console.error("Error:", error);
         }
+        return true
       }
-
-      return true; // Allow sign in
-    },
-  },
+    }
+  }
+  
 };
 
 const handler = NextAuth(authOptions);
