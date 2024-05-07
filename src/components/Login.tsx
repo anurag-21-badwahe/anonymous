@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect }  from "react";
 import { useSession, signIn, signOut } from "next-auth/react"
 import { notFound } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -8,11 +8,16 @@ import githubIcon from "../../public/githubIcon.png";
 import Image from "next/image";
 
 const Login = () => {
+  const router = useRouter();
     const { data: session } = useSession();
-    // if (session) {
-    //    const router = useRouter();
-    //    router.push('/home')
-    //   }
+    useEffect(() => {
+      if (session) {
+        router.push("/home");
+      }
+      else{
+        router.push("/login");
+      }
+    }, [session, router]);
   return (
     <>
       <div className="w-screen h-screen bg-yellow-100 flex items-center justify-center">

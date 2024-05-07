@@ -3,6 +3,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/modals/User";
+import connectDB from "@/db/connectDb";
 
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
@@ -20,39 +21,47 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, email, credentials }: any) {
       if (account?.provider === "github" || account?.provider === "google") {
         try {
-          // Connect to the DB
-          const client = await mongoose.connect(process.env.MONGODB_URI as string);
-          console.log("DB Connected");
-          
-  
-          // Find the user in the database
-          const currentUser = await User.findOne({ email: email });
-          console.log("currentUser",currentUser);
-          
-  
-          // If user doesn't exist, create a new user
-          if (!currentUser) {
-            const newUser = new User({
-              email: email,
-              username: email.split("@")[0],
+          await connectDB();
+
+          // Find or create the user in the database
+          let dbUser = await User.findOne({ email: email });
+
+          if (!dbUser) {
+            dbUser = await User.create({
+              email: user.email,
+              username: user?.email.split("@")[0],
             });
-            await newUser.save();
-            user.name = newUser.username;
-          } else {
-            // If user exists, set user name
-            user.name = currentUser.username;
           }
+
+          // Set user name in session
+          user.name = dbUser.username;
         } catch (error) {
           // Handle error
-          console.log("Error with DB");
-          
           console.error("Error:", error);
         }
-        return true
+        return true;
       }
-    }
-  }
-  
+    },
+    async session({ session, token, user }) {
+      try {
+        await connectDB();
+
+        if (session && session.user && session.user.email) {
+          // Find the user in the database
+          const dbUser = await User.findOne({ email: session.user.email });
+
+          if (dbUser) {
+            // Set user name in session
+            session.user.name = dbUser.username;
+          }
+        }
+      } catch (error) {
+        // Handle error
+        console.error("Error:", error);
+      }
+      return session;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
