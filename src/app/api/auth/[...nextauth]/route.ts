@@ -21,10 +21,9 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "github") {
         try {
           // Connect to MongoDB
-          await mongoose.connect(process.env.MONGODB_URI as string, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-          });
+          await mongoose.connect(process.env.MONGODB_URI as string)
+          console.log(process.env.MONGODB_URI as string);
+          
           console.log("Connected to MongoDB");
 
           // Check if email exists and is a string

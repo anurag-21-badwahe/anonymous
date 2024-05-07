@@ -1,19 +1,17 @@
 "use client";
 import React from "react";
 import { useSession, signIn, signOut } from "next-auth/react"
+import { notFound } from "next/navigation";
+import { useRouter } from "next/navigation";
 import googleIcon from "../../public/googleIcon.png";
 import githubIcon from "../../public/githubIcon.png";
 import Image from "next/image";
 
 const Login = () => {
     const { data: session } = useSession();
-    if (session &&  session.user) {
-        return (
-          <>
-            Signed in as {session.user.email} <br />
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-        )
+    if (session) {
+       const router = useRouter();
+       router.push('/home')
       }
   return (
     <>
