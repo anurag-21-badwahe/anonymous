@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import User from "@/modals/User";
+import User from "@/modals/Usermsg";
 import connectDB from "@/db/connectDb";
 
 export const authOptions: NextAuthOptions = {
