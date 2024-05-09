@@ -15,7 +15,7 @@ const Login = () => {
         router.push("/home");
       }
       else{
-        router.push("/login");
+        router.push("/sign-in");
       }
     }, [session, router]);
   return (
