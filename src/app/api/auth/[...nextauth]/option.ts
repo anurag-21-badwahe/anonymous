@@ -4,6 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
+import UserModel from "@/modals/Usermsg";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -65,7 +66,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session,token }) {
       if(token){
-        session.user._id  =  token._id
+        session.user._id  = token._id
         session.user._id.isVerified = token.isVerified
         session.user.isAcceptingMessages = token.isAcceptingMessages
         session.user.username = token.username
@@ -74,7 +75,7 @@ export const authOptions: NextAuthOptions = {
     }
   },
   pages: {
-    signIn: "sign-in",
+    signIn: "/sign-in",
   },
   session: {
     strategy : "jwt"
