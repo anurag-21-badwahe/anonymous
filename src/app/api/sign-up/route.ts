@@ -2,13 +2,34 @@ import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/modals/Usermsg';
 import bcrypt from 'bcryptjs';
 import { sendVerificationEmail } from '@/helpers/sendVerificationEmail';
+import {z} from 'zod'
+
+const VerificationSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+  email : z.string().email()
+});
 
 export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { username, email, password } = await request.json();
+    const requestBody = await request.json();
+        
+    // Validate the request body against the schema
+    const validationResult = VerificationSchema.safeParse(requestBody);
 
+    // Check if validation succeeded
+    if (!validationResult.success) {
+        // If validation fails, return a 400 response with error details
+        return new Response(
+            JSON.stringify({ success: false, message: 'Invalid request body', errors: validationResult.error.errors }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+    }
+
+    // Destructure the validated data
+    const { username, email, password } = validationResult.data;
     const existingVerifiedUserByUsername = await UserModel.findOne({
       username,
       isVerified: true,
