@@ -1,7 +1,7 @@
 import dbConnect from '@/lib/dbConnect';
-import UserModel from '@/modals/Usermsg';
+import UserModel from '@/modals/Usermsg'
 import { z } from 'zod';
-import { usernameValidation } from '@/schema/signUpSchema';
+import { usernameValidation } from '@/schemas/signUpSchema';
 
 const UsernameQuerySchema = z.object({
   username: usernameValidation,
@@ -12,14 +12,13 @@ export async function GET(request: Request) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const queryParams = {
-      username: searchParams.get('username'), // this will get username from the url
-    };
-   
-    //validation with zod
-    const result = UsernameQuerySchema.safeParse(queryParams);
-    // console.log(result);
+    // console.log(searchParams);
     
+    const queryParams = {
+      username: searchParams.get('username'),
+    };
+
+    const result = UsernameQuerySchema.safeParse(queryParams);
 
     if (!result.success) {
       const usernameErrors = result.error.format().username?._errors || [];
@@ -55,7 +54,7 @@ export async function GET(request: Request) {
     return Response.json(
       {
         success: true,
-        message: 'Username is available ',
+        message: 'Username is available',
       },
       { status: 200 }
     );
