@@ -16,6 +16,11 @@ declare module 'next-auth' {
     isAcceptingMessages?: boolean;
     username?: string;
   }
+  interface registerErrorType{
+    email?: string;
+    name?: string;
+    password?: string;
+  };
 }
 
 declare module 'next-auth/jwt' {
