@@ -90,7 +90,7 @@ import {
                 </Text>
               </Row>
               <Row>
-                <Text>{otp}</Text> 
+                <Text className='text-4xl'>{otp}</Text> 
               </Row>
               <Row>
                 <Text>

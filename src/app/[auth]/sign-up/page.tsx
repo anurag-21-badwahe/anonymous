@@ -58,6 +58,7 @@ export default function SignUpForm() {
             `/api/check-unique-username?username=${username}`
           );
           setUsernameMessage(response.data.message);
+          // console.log("response msg :",response.data.message)
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>;
           setUsernameMessage(
@@ -117,7 +118,7 @@ export default function SignUpForm() {
         description: response.data.message,
       });
 
-      router.replace(`/verify/${username}`);
+      router.replace(`[auth]/verify/${username}`);
 
       setIsSubmitting(false);
     } catch (error) {
@@ -168,7 +169,7 @@ export default function SignUpForm() {
                   {!isCheckingUsername && usernameMessage && (
                     <p
                       className={`text-sm ${
-                        usernameMessage === "Username is unique"
+                        usernameMessage === "Username is unique" || usernameMessage === "Username is available"
                           ? "text-green-500"
                           : "text-red-500"
                       }`}
@@ -230,7 +231,7 @@ export default function SignUpForm() {
         <div className="text-center mt-4">
           <p>
             Already a member?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+            <Link href="/auth/sign-in" className="text-blue-600 hover:text-blue-800">
               Sign in
             </Link>
           </p>
