@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        username: { label: "Email", type: "text", placeholder: "Bill Gates" },
+        username: { label: "Email", type: "text", placeholder: "Steve Jobs" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
@@ -54,31 +54,50 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
-  callbacks : {
-    async jwt({ token, user }) {
-      if(user){
-        token._id = user._id?.toString()
+  callbacks: {
+    async signIn({user,email,account}:any):Promise<any>{
+      if(account.provider == "github" ||account.provider == "google"){
+       await dbConnect();
+       console.log("Connected to Db for providers");
+       
+       const currentUser = await UserModel.findOne({email:email})
+       if(!currentUser){
+        const newUser = await UserModel.create({
+          email:user.email,
+          username:user.email.split("@")[0]
+        })
+        user.name = newUser.username
+       }
+       else{
+        user.name = currentUser.username
+       }
+       return true
+      }
+    },
+     async jwt({ token, user }) {
+      if (user) {
+        token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.isAcceptingMessages = user.isAcceptingMessages;
-        token.username = user.username
+        token.username = user.username;
       }
-      return token
+      return token;
     },
-    async session({ session,token }) {
-      if(token){
-        session.user._id  = token._id
-        session.user._id.isVerified = token.isVerified
-        session.user.isAcceptingMessages = token.isAcceptingMessages
-        session.user.username = token.username
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token._id;
+        session.user._id.isVerified = token.isVerified;
+        session.user.isAcceptingMessages = token.isAcceptingMessages;
+        session.user.username = token.username;
       }
-      return session
-    }
+      return session;
+    },
   },
   pages: {
     signIn: "/sign-in",
   },
   session: {
-    strategy : "jwt"
+    strategy: "jwt",
   },
-  secret : process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };

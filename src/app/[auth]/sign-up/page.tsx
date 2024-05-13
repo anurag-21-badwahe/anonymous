@@ -189,7 +189,7 @@ export default function SignUpForm() {
                   <Input
                     {...field}
                     name="email"
-                    placeholder="billgates@gmail.com"
+                    placeholder="stevejobs@gmail.com"
                   />
                   <p className="text-muted text-gray-400 text-sm">
                     We will send you a verification code
@@ -248,8 +248,10 @@ export default function SignUpForm() {
             </>
           ) : (
             <>
-            <img
+            <Image
               src={googleIcon.src}
+              width={6}
+              height={6}
               alt="Google Icon"
               className="w-6 h-6 mr-2"
             />
@@ -268,8 +270,10 @@ export default function SignUpForm() {
               </>
             ) : (
               <>
-                <img
+                <Image
                   src={githubIcon.src}
+                  width={6}
+                  height={6}
                   alt="Github Icon"
                   className="w-6 h-6 mr-2"
                 />
