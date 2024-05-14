@@ -38,9 +38,10 @@ export default function VerifyAccount() {
         description: response.data.message,
       });
 
-      router.replace('[auth]/sign-in');
+      router.replace('/auth/sign-in');
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
+      console.log("Verify Error",axiosError.response)
       toast({
         title: 'Verification Failed',
         description:

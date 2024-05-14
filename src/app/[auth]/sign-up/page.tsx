@@ -118,7 +118,7 @@ export default function SignUpForm() {
         description: response.data.message,
       });
 
-      router.replace(`/verify/${username}`);
+      router.replace(`verify/${username}`);
 
       setIsSubmitting(false);
     } catch (error) {

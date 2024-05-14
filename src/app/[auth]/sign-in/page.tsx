@@ -33,15 +33,23 @@ export default function SignInForm() {
       password: "",
     },
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmittingGoogleBtn, setIsSubmittingGoogleBtn] = useState(false);
   const [isSubmittingGithubBtn, setIsSubmittingGithubBtn] = useState(false);
   const { toast } = useToast();
+
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+    console.log("Data :", data);
+    console.log("Clicked");
+    setIsSubmitting(true);
     const result = await signIn("credentials", {
       redirect: false,
       identifier: data.identifier,
       password: data.password,
     });
+    console.log("Result :", result);
+    // console.log("Data :", data.identifier);
+    // console.log("Data pass:", data.password);
 
     if (result?.error) {
       if (result.error === "CredentialsSignin") {
@@ -60,23 +68,25 @@ export default function SignInForm() {
     }
 
     if (result?.url) {
+      console.log("SUccess")
       router.replace("/dashboard");
     }
+    setIsSubmitting(false);
   };
   const handleGoogleSignIn = async () => {
-    setIsSubmittingGoogleBtn(true)
+    // console.log("Google Btn Clicked")
+    setIsSubmittingGoogleBtn(true);
     await signIn("google", {
-        callbackUrl: "/",
-        redirect: false,
-      });
-      
+      callbackUrl: "/",
+      redirect: false,
+    });
   };
 
   const handleGitHubSignIn = async () => {
-    setIsSubmittingGithubBtn(true)
+    setIsSubmittingGithubBtn(true);
     signIn("github", {
-        callbackUrl: "/",
-      });
+      callbackUrl: "/",
+    });
   };
 
   return (
@@ -95,8 +105,8 @@ export default function SignInForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email/Username</FormLabel>
-                  <Input {...field} />
+                  <FormLabel>Email</FormLabel>
+                  <Input {...field} placeholder="email" />
                   <FormMessage />
                 </FormItem>
               )}
@@ -107,13 +117,20 @@ export default function SignInForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} placeholder="password" />
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
-              Sign In
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
         </Form>

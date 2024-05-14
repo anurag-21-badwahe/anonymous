@@ -20,14 +20,18 @@ export const authOptions: NextAuthOptions = {
         try {
           const user = await UserModel.findOne({
             $or: [
-              { email: credentials.identifier.email },
-              { username: credentials.identifier.username },
+              { email: credentials.identifier },
+              { username: credentials.identifier },
             ],
           });
+          // console.log("User : ",user);
+
+          // console.log("Cred:",credentials.identifier);
+
           if (!user) {
             throw new Error("No user found with this email");
           }
-          if (user.isVerified) {
+          if (!user.isVerified) {
             throw new Error("Please verify your account before login");
           }
           const isPasswordCorrect = await bcrypt.compare(
@@ -36,6 +40,8 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (isPasswordCorrect) {
+            // console.log("Everything fine")
+            // console.log("user",user)
             return user;
           } else {
             throw new Error("Incorrect Password");
@@ -55,26 +61,25 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({user,email,account}:any):Promise<any>{
-      if(account.provider == "github" ||account.provider == "google"){
-       await dbConnect();
-       console.log("Connected to Db for providers");
-       
-       const currentUser = await UserModel.findOne({email:email})
-       if(!currentUser){
-        const newUser = await UserModel.create({
-          email:user.email,
-          username:user.email.split("@")[0]
-        })
-        user.name = newUser.username
-       }
-       else{
-        user.name = currentUser.username
-       }
-       return true
+    async signIn({ user, email, account }: any): Promise<any> {
+      if (account.provider == "github" || account.provider == "google") {
+        await dbConnect();
+        console.log("Connected to Db for providers");
+
+        const currentUser = await UserModel.findOne({ email: email });
+        if (!currentUser) {
+          const newUser = await UserModel.create({
+            email: user.email,
+            username: user.email.split("@")[0],
+          });
+          user.name = newUser.username;
+        } else {
+          user.name = currentUser.username;
+        }
+        return true;
       }
     },
-     async jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
