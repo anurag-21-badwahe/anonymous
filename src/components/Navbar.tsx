@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import profileIcon from "../../public/profileIcon.png";
+import logoIcon from "../../public/logo.jpg";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -11,20 +12,19 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ username }) => {
   const { data: session } = useSession();
-  console.log("data",session);
-  
-//   const usernamme = session?.user?.image ? session.user.image : "Guest";
-//   console.log(usernamme);
-  
-  
+  console.log("data", session);
+
+  //   const usernamme = session?.user?.image ? session.user.image : "Guest";
+  //   console.log(usernamme);
+
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
-  console.log(session);
-  
-    console.log("image",session?.user?.image);
+    console.log(session);
+
+    console.log("image", session?.user?.image);
   };
 
   const handleLogout = () => {
@@ -37,18 +37,23 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
 
   return (
     <nav className="flex justify-between items-center bg-white shadow-lg px-6 py-3">
-      <div className="flex items-center">
-        <img src="/path/to/logo.png" alt="Logo" className="w-10 h-10 mr-4" />
-        <span className="text-lg font-bold">Your Brand</span>
+      <div className="flex items-center flex-col">
+        <Image
+          src={logoIcon}
+          alt="Logo"
+          width={12}
+          height={12}
+          className="w-10 h-10 mr-4"
+        />
+        <span className="text-lg font-bold italic">Feedonymous</span>
       </div>
       <div className="flex items-center">
         <div className="relative mr-4 cursor-pointer" onClick={toggleDropdown}>
           <div className="flex items-center hover:text-lg">
             <div>
-                
               {session ? (
                 <Image
-                 src={session?.user?.image}
+                  src={session?.user?.image}
                   alt="Add Icon"
                   className="w-6 h-6 mr-2"
                   width={6}
@@ -56,7 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
                 />
               ) : (
                 <Image
-                src={profileIcon.src}
+                  src={profileIcon.src}
                   alt="Add Icon"
                   className="w-6 h-6 mr-2"
                   width={6}
@@ -96,9 +101,9 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
             </div>
           )}
         </div>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        {/* <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
           Payment
-        </button>
+        </button> */}
       </div>
     </nav>
   );
