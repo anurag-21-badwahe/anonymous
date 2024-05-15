@@ -12,67 +12,49 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ username }) => {
   const { data: session } = useSession();
-  console.log("data", session);
-
-  //   const usernamme = session?.user?.image ? session.user.image : "Guest";
-  //   console.log(usernamme);
-
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
-    console.log(session);
-
-    console.log("image", session?.user?.image);
   };
 
   const handleLogout = () => {
     signOut();
     router.push("/");
   };
+
   const handleLogin = () => {
-    router.push("/");
+    signIn();
   };
 
   return (
-    <nav className="flex justify-between items-center bg-white shadow-lg px-6 py-3">
+    <nav className="flex justify-between items-center bg-gray-800 shadow-lg px-6 py-3">
       <div className="flex items-center flex-col">
         <Image
           src={logoIcon}
           alt="Logo"
-          width={12}
-          height={12}
+          width={40}
+          height={40}
           className="w-10 h-10 mr-4"
         />
-        <span className="text-lg font-bold italic">Feedonymous</span>
+        <span className="text-lg font-bold italic text-white mx-5">Feedonymous</span>
       </div>
       <div className="flex items-center">
         <div className="relative mr-4 cursor-pointer" onClick={toggleDropdown}>
           <div className="flex items-center hover:text-lg">
-            <div>
-              {session ? (
-                <Image
-                  src={session?.user?.image}
-                  alt="Add Icon"
-                  className="w-6 h-6 mr-2"
-                  width={6}
-                  height={6}
-                />
-              ) : (
-                <Image
-                  src={profileIcon.src}
-                  alt="Add Icon"
-                  className="w-6 h-6 mr-2"
-                  width={6}
-                  height={6}
-                />
-              )}
-            </div>
-            <div className="mr-2"></div>
-            <div className="mr-2">{username}</div>
+            <Image
+              src={session?.user?.image || profileIcon.src}
+              alt="Profile Icon"
+              className="w-6 h-6 mr-2"
+              width={24}
+              height={24}
+            />
+            <span className="mr-2 text-white">{username}</span>
             <svg
-              className="fill-current text-gray-600 h-4 w-4 rotate-180 hover:text-lg hover:text-black"
+              className={`fill-current text-gray-600 h-4 w-4 transition-transform ${
+                showDropdown ? "rotate-180" : ""
+              }`}
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
             >
@@ -101,9 +83,6 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
             </div>
           )}
         </div>
-        {/* <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-          Payment
-        </button> */}
       </div>
     </nav>
   );
