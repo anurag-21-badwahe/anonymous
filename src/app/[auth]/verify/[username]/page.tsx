@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { verifySchema } from '@/schemas/verifySchema';
 
-export default function ResetPassword() {
+export default function VerifyAccount() {
   const router = useRouter();
   const params = useParams<{ username: string }>();
   const { toast } = useToast();
@@ -28,7 +28,7 @@ export default function ResetPassword() {
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     try {
-      const response = await axios.post<ApiResponse>(`/api/resetPassword`, {
+      const response = await axios.post<ApiResponse>(`/api/verify-user-code`, {
         username: params.username,
         code: data.code,
       });
@@ -38,9 +38,10 @@ export default function ResetPassword() {
         description: response.data.message,
       });
 
-      router.replace('/sign-in');
+      router.replace('/auth/sign-in');
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
+      console.log("Verify Error",axiosError.response)
       toast({
         title: 'Verification Failed',
         description:
@@ -56,9 +57,9 @@ export default function ResetPassword() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Reset Your Password
+            Verify Your Account
           </h1>
-          <p className="mb-4">Enter the reset password code sent to your email</p>
+          <p className="mb-4">Enter the verification code sent to your email</p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -67,13 +68,13 @@ export default function ResetPassword() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Reset Password Code</FormLabel>
+                  <FormLabel>Verification Code</FormLabel>
                   <Input {...field} />
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Reset Password</Button>
+            <Button type="submit">Verify</Button>
           </form>
         </Form>
       </div>

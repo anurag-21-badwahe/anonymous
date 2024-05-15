@@ -1,6 +1,6 @@
-import UserModel from '@/modals/Usermsg';
+import UserModel from '@/models/Usermsg';
 import dbConnect from '@/lib/dbConnect';
-import { Message } from '@/modals/Usermsg';
+import { Message } from '@/models/Usermsg';
 
 export async function POST(request: Request) {
   await dbConnect();

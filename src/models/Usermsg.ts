@@ -27,6 +27,8 @@ export interface User extends Document {
   verifyCodeExpiry: Date; 
   isVerified: boolean;
   isAcceptingMessages: boolean;
+  resetPasswordCode?: string;
+  resetPasswordCodeExpiry?: Date;
   messages: Message[];
 }
 
@@ -71,7 +73,14 @@ const UserSchema: Schema<User> = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    resetPasswordCode: {
+      type: String,
+    },
+    resetPasswordCodeExpiry: {
+      type: Date,
+    },
     messages: [MessageSchema],
+    
   },
   { timestamps: true }
 );

@@ -1,97 +1,69 @@
 import dbConnect from '@/lib/dbConnect';
-import UserModel from '@/modals/Usermsg';
-import bcrypt from 'bcryptjs';
-import {sendResetPasswordEmail} from '@/helpers/sendResetPasswordEmail'
+import UserModel from '@/models/Usermsg';  // Ensure this path is correct
+import { sendResetPasswordEmail } from '@/helpers/sendResetPasswordEmail';
 
 export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { username, email, password } = await request.json();
+    const { email, username } = await request.json();
+    // console.log("Received email:", email);
+    // console.log("Received username:", username);
 
-    const existingVerifiedUserByUsername = await UserModel.findOne({
-      username,
-      isVerified: true,
-    });
+    // Find the user by email and username and ensure they are verified
+    const existingUser = await UserModel.findOne({ email, username, isVerified: true });
 
-    if (existingVerifiedUserByUsername) {
-      return Response.json(
-        {
+    if (!existingUser) {
+      return new Response(
+        JSON.stringify({
           success: false,
-          message: 'Username is already taken',
-        },
-        { status: 400 }
+          message: 'User not found or not verified.',
+        }),
+        { status: 404 }
       );
     }
 
-    const existingUserByEmail = await UserModel.findOne({ email });
-    let verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate a reset password code
+    const resetPasswordCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    if (existingUserByEmail) {
-      if (existingUserByEmail.isVerified) {
-        return Response.json(
-          {
-            success: false,
-            message: 'User already exists with this email',
-          },
-          { status: 400 }
-        );
-      } else {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        existingUserByEmail.password = hashedPassword;
-        existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
-        await existingUserByEmail.save();
-      }
-    } else {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const expiryDate = new Date();
-      expiryDate.setHours(expiryDate.getHours() + 1);
+    // Set an expiration date for the reset code (1 hour from now)
+    const expiryDate = new Date();
+    expiryDate.setHours(expiryDate.getHours() + 1);
 
-      const newUser = new UserModel({
-        username,
-        email,
-        password: hashedPassword,
-        verifyCode,
-        verifyCodeExpiry: expiryDate,
-        isVerified: false,
-        isAcceptingMessages: true,
-        messages: [],
-      });
+    // Update the user document with the reset code and expiration date
+    existingUser.resetPasswordCode = resetPasswordCode;
+    existingUser.resetPasswordCodeExpiry = expiryDate;
 
-      await newUser.save();
-    }
+    await existingUser.save();
 
-    // Send verification email
-    const emailResponse = await sendVerificationEmail(
-      email,
-      username,
-      verifyCode
-    );
+    // Send the reset password email
+    const emailResponse = await sendResetPasswordEmail(email, username, resetPasswordCode);
+
     if (!emailResponse.success) {
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           message: emailResponse.message,
-        },
+        }),
         { status: 500 }
       );
     }
 
-    return Response.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: true,
-        message: 'User registered successfully. Please verify your account.',
-      },
-      { status: 201 }
+        message: 'Reset password email sent successfully.',
+      }),
+      { status: 200 }
     );
+
   } catch (error) {
-    console.error('Error registering user:', error);
-    return Response.json(
-      {
+    console.error('Error resetting password:', error);
+    return new Response(
+      JSON.stringify({
         success: false,
-        message: 'Error registering user',
-      },
+        message: 'Error resetting password.',
+      }),
       { status: 500 }
     );
   }

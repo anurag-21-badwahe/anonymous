@@ -2,7 +2,7 @@ import { resend } from "@/lib/resend";
 import ResetPasswordEmail from "../../emails/ResetPasswordEmail"
 import { ApiResponse } from '@/types/ApiResponse';
 
-export async function sendVerificationEmail(
+export async function sendResetPasswordEmail(
   email: string,
   username: string,
   resetPasswordCode: string

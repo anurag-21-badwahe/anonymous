@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/modals/Usermsg";
+import UserModel from "@/models/Usermsg";
 
 export const authOptions: NextAuthOptions = {
   providers: [

@@ -1,8 +1,8 @@
-import UserModel from '@/modals/Usermsg';
+import UserModel from '@/models/Usermsg';
 import { getServerSession } from 'next-auth/next';
 import dbConnect from '@/lib/dbConnect';
 import { User } from 'next-auth';
-import { Message } from '@/modals/Usermsg';
+import { Message } from '@/models/Usermsg';
 import { NextRequest } from 'next/server';
 import { authOptions } from '../../auth/[...nextauth]/option';
 
