@@ -6,12 +6,14 @@ export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { email, username } = await request.json();
+    const { email } = await request.json();
     // console.log("Received email:", email);
     // console.log("Received username:", username);
 
     // Find the user by email and username and ensure they are verified
-    const existingUser = await UserModel.findOne({ email, username, isVerified: true });
+    const existingUser = await UserModel.findOne({ email,isVerified: true });
+
+    const username = existingUser?.username || ""
 
     if (!existingUser) {
       return new Response(
@@ -37,7 +39,7 @@ export async function POST(request: Request) {
     await existingUser.save();
 
     // Send the reset password email
-    const emailResponse = await sendResetPasswordEmail(email, username, resetPasswordCode);
+    const emailResponse = await sendResetPasswordEmail(email,username,resetPasswordCode);
 
     if (!emailResponse.success) {
       return new Response(
@@ -53,6 +55,7 @@ export async function POST(request: Request) {
       JSON.stringify({
         success: true,
         message: 'Reset password email sent successfully.',
+        username
       }),
       { status: 200 }
     );

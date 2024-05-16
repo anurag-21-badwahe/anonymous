@@ -68,7 +68,7 @@ export default function SignInForm() {
     }
 
     if (result?.url) {
-      console.log("SUccess")
+      console.log("SUccess");
       router.replace("/dashboard");
     }
     setIsSubmitting(false);
@@ -94,7 +94,7 @@ export default function SignInForm() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Welcome Back to True Feedback
+            Welcome Back to Feedonymous
           </h1>
           <p className="mb-4">Sign in to continue your secret conversations</p>
         </div>
@@ -122,6 +122,14 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
+            <div className="text-center mt-4">
+              <Link
+                href="/auth/resetPasswordEmail"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Forget Password?
+              </Link>
+            </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>

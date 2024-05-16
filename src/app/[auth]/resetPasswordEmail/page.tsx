@@ -14,7 +14,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import * as z from "zod";
@@ -22,7 +22,6 @@ import { verifyEmailSchema } from "@/schemas/forgetPasswordEmailSchema";
 
 export default function ResetPassword() {
   const router = useRouter();
-  const { username } = useParams<{ username: string }>();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof verifyEmailSchema>>({
     resolver: zodResolver(verifyEmailSchema),
@@ -33,16 +32,19 @@ export default function ResetPassword() {
     setIsSubmitting(true)
     try {
       const response = await axios.post<ApiResponse>("/api/resetPassword", {
-        username,
+        // username,
         email: data.email,
       });
+
+      // console.log(response)
+      // console.log(response?.data?.username)
 
       toast({
         title: "Success",
         description: response.data.message,
       });
 
-      router.replace(`/auth/verifyResetPasswordCode/${username}`);
+      router.replace(`/auth/verifyResetPasswordCode/${response?.data?.username}`);
 
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
