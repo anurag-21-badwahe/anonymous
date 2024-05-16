@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import profileIcon from "../../public/profileIcon.png";
+import { Router } from "next/router";
 import logoIcon from "../../public/logo.jpg";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -25,7 +26,8 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
   };
 
   const handleLogin = () => {
-    signIn();
+    router.push("/auth/sign-in");
+    // signIn();
   };
 
   return (
@@ -69,14 +71,14 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
                     onClick={handleLogout}
                   >
-                    Logout
+                    Signout
                   </li>
                 ) : (
                   <li
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
                     onClick={handleLogin}
                   >
-                    Login
+                   Signin
                   </li>
                 )}
               </ul>

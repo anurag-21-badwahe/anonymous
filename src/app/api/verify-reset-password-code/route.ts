@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     // Check if the code is correct and not expired
     const isCodeValid = user.resetPasswordCode === code;
     const resetPasswordCodeExpiry = user.resetPasswordCodeExpiry;
-    const isCodeNotExpired = new Date() < new Date(resetPasswordCodeExpiry);
+    const isCodeNotExpired = new Date() < new Date(resetPasswordCodeExpiry) || "";
     // console.log(resetPasswordCodeExpiry);
     
 

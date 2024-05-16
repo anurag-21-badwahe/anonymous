@@ -39,8 +39,8 @@ export default function SignInForm() {
   const { toast } = useToast();
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    console.log("Data :", data);
-    console.log("Clicked");
+    // console.log("Data :", data);
+    // console.log("Clicked");
     setIsSubmitting(true);
     const result = await signIn("credentials", {
       redirect: false,
@@ -68,7 +68,7 @@ export default function SignInForm() {
     }
 
     if (result?.url) {
-      console.log("SUccess");
+      console.log("Success");
       router.replace("/dashboard");
     }
     setIsSubmitting(false);

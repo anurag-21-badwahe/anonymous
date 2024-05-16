@@ -33,7 +33,7 @@ export default function Home() {
             Dive into the World of Anonymous Feedback
           </h1>
           <p className="mt-3 md:mt-4 text-base md:text-lg text-black">
-            True Feedback - Where your identity remains a secret.
+            Feedonymous - Where your identity remains a secret.
           </p>
         </section>
 
@@ -63,11 +63,17 @@ export default function Home() {
             ))}
           </CarouselContent>
         </Carousel>
+        <h1 className="text-3xl md:text-2xl font-bold text-black ">
+      <Link href="/auth/sign-in" className="text-blue-600 mr-2 underline hover:text-blue-800">
+        Sign in
+      </Link>
+      to use the true potential of the app
+    </h1>
       </main>
 
       {/* Footer */}
       <footer className="text-center p-4 md:p-6 bg-gray-900 text-white">
-        © 2023 True Feedback. All rights reserved.
+        © 2024 Feedonymous. All rights reserved.
       </footer>
     </>
   );
