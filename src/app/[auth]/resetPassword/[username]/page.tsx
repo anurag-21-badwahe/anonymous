@@ -48,7 +48,7 @@ export default function ResetPassword() {
         description: response.data.message,
       });
 
-      router.replace(`/`);
+      router.replace(`/auth/sign-in`);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({
