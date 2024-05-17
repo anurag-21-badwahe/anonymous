@@ -15,6 +15,7 @@ import { useSession } from "next-auth/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AcceptMessageSchema } from "@/schemas/acceptMessageSchema";
+import Navbar from "@/components/Navbar";
 
 function UserDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -22,7 +23,6 @@ function UserDashboard() {
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
   const { toast } = useToast();
-
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
   };
@@ -69,6 +69,7 @@ function UserDashboard() {
           });
         }
       } catch (error) {
+        console.error(error);
         const axiosError = error as AxiosError<ApiResponse>;
         toast({
           title: "Error",
@@ -100,6 +101,7 @@ function UserDashboard() {
         acceptMessages: !acceptMessages,
       });
       setValue("acceptMessages", !acceptMessages);
+      // console.log(response)
       toast({
         title: response.data.message,
         variant: "default",
@@ -117,11 +119,11 @@ function UserDashboard() {
   };
 
   if (!session || !session.user) {
-  
     return <div>Please Login</div>;
   }
 
   const { username } = session.user as User;
+
 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/u/${username}`;
@@ -134,8 +136,9 @@ function UserDashboard() {
     });
   };
 
-
-    return (
+  return (
+    <>
+      <Navbar username={username ?? "Guest"} />
       <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
         <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
@@ -193,7 +196,8 @@ function UserDashboard() {
           )}
         </div>
       </div>
-    );
+    </>
+  );
 }
 
 export default UserDashboard;

@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CardHeader, CardContent, Card } from "@/components/ui/card";
 import { useCompletion } from "ai/react";
+import Image from "next/image";
 import {
   Form,
   FormControl,
@@ -145,12 +146,14 @@ export default function SendMessage() {
 
       <div className="space-y-4 my-8">
         <div className="space-y-2">
+          <div></div>
           <Button
             onClick={fetchSuggestedMessages}
             className="my-4"
             disabled={isSuggestLoading}
           >
-            Suggest Messages
+            Suggest Messages With AI
+            
           </Button>
           <p>Click on any message below to select it.</p>
         </div>

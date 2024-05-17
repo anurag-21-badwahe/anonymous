@@ -75,7 +75,8 @@ export default function SignUpForm() {
     setIsSubmittingGoogleBtn(true);
     try {
       await signIn("google");
-      router.replace(`/verify/${username}`);
+      // router.replace(`/verify/${username}`);
+      router.replace('/dashboard')
       setIsSubmittingGoogleBtn(false);
     } catch (error) {
       console.error("Error during Google sign-in:", error);
@@ -93,7 +94,8 @@ export default function SignUpForm() {
     setIsSubmittingGithubBtn(true);
     try {
       await signIn("github");
-      router.replace(`/verify/${username}`);
+      // router.replace(`/verify/${username}`);
+      router.replace('/dashboard')
       setIsSubmittingGithubBtn(false);
     } catch (error) {
       console.error("Error during GitHub sign-in:", error);
@@ -168,7 +170,8 @@ export default function SignUpForm() {
                   {!isCheckingUsername && usernameMessage && (
                     <p
                       className={`text-sm ${
-                        usernameMessage === "Username is unique" || usernameMessage === "Username is available"
+                        usernameMessage === "Username is unique" ||
+                        usernameMessage === "Username is available"
                           ? "text-green-500"
                           : "text-red-500"
                       }`}
@@ -230,7 +233,10 @@ export default function SignUpForm() {
         <div className="text-center mt-4">
           <p>
             Already a member?{" "}
-            <Link href="/auth/sign-in" className="text-blue-600 hover:text-blue-800">
+            <Link
+              href="/auth/sign-in"
+              className="text-blue-600 hover:text-blue-800"
+            >
               Sign in
             </Link>
           </p>
@@ -241,23 +247,25 @@ export default function SignUpForm() {
           <Button
             onClick={handleGoogleSignIn}
             className="bg-blue-700 py-2 px-4 rounded-md hover:bg-blue-500 w-1/2 mr-2 flex items-center justify-center"
-          > {isSubmittingGoogleBtn ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please wait
-            </>
-          ) : (
-            <>
-            <Image
-              src={googleIcon.src}
-              width={6}
-              height={6}
-              alt="Google Icon"
-              className="w-6 h-6 mr-2"
-            />
-            Continue with Google
-            </>
-          )}
+          >
+            {" "}
+            {isSubmittingGoogleBtn ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span className="hidden xs:inline">Please Wait</span>
+              </>
+            ) : (
+              <>
+                <Image
+                  src={googleIcon.src}
+                  width={6}
+                  height={6}
+                  alt="Google Icon"
+                  className="w-6 h-6 mr-2"
+                />
+                <span className="hidden xs:inline">Continue with Google</span>
+              </>
+            )}
           </Button>
           <Button
             onClick={handleGitHubSignIn}
@@ -266,7 +274,7 @@ export default function SignUpForm() {
             {isSubmittingGithubBtn ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
+                <span className="hidden xs:inline">Please Wait</span>
               </>
             ) : (
               <>
@@ -277,7 +285,7 @@ export default function SignUpForm() {
                   alt="Github Icon"
                   className="w-6 h-6 mr-2"
                 />
-                Continue with Github
+                <span className="hidden xs:inline">Continue with Github</span>
               </>
             )}
           </Button>

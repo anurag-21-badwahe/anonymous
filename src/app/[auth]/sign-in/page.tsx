@@ -73,20 +73,44 @@ export default function SignInForm() {
     }
     setIsSubmitting(false);
   };
+ 
+  
   const handleGoogleSignIn = async () => {
-    // console.log("Google Btn Clicked")
     setIsSubmittingGoogleBtn(true);
-    await signIn("google", {
-      callbackUrl: "/",
-      redirect: false,
-    });
+    try {
+      await signIn("google");
+      // router.replace(`/verify/${username}`);
+      router.replace('/dashboard')
+      setIsSubmittingGoogleBtn(false);
+    } catch (error) {
+      console.error("Error during Google sign-in:", error);
+      toast({
+        title: "Sign In Failed",
+        description:
+          "There was a problem signing in with Google. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmittingGoogleBtn(false);
+    }
   };
 
   const handleGitHubSignIn = async () => {
     setIsSubmittingGithubBtn(true);
-    signIn("github", {
-      callbackUrl: "/",
-    });
+    try {
+      await signIn("github");
+      // router.replace(`/verify/${username}`);
+      router.replace('/dashboard')
+      setIsSubmittingGithubBtn(false);
+    } catch (error) {
+      console.error("Error during GitHub sign-in:", error);
+      toast({
+        title: "Sign In Failed",
+        description:
+          "There was a problem signing in with Github. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmittingGithubBtn(false);
+    }
   };
 
   return (
@@ -164,7 +188,7 @@ export default function SignInForm() {
             {isSubmittingGoogleBtn ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
+                <span className="hidden xs:inline">Please Wait</span>
               </>
             ) : (
               <>
@@ -175,7 +199,7 @@ export default function SignInForm() {
                   alt="Google Icon"
                   className="w-6 h-6 mr-2"
                 />
-                Continue with Google
+                <span className="hidden xs:inline">Continue with Google</span>
               </>
             )}
           </Button>
@@ -186,7 +210,7 @@ export default function SignInForm() {
             {isSubmittingGithubBtn ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
+                <span className="hidden xs:inline">Please Wait</span>
               </>
             ) : (
               <>
@@ -197,7 +221,7 @@ export default function SignInForm() {
                   alt="Github Icon"
                   className="w-6 h-6 mr-2"
                 />
-                Continue with Github
+                <span className="hidden xs:inline">Continue with Github</span>
               </>
             )}
           </Button>
