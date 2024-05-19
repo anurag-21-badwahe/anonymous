@@ -22,16 +22,15 @@ import { paymentSchema } from "@/schemas/paymentSchema";
 export default function BuyMeACoffeePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  
   const form = useForm<z.infer<typeof paymentSchema>>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       name: "",
       message: "",
-      payment: 100
+      payment: 100,
     },
   });
-  
+
   const paymentAmount = form.watch("payment");
 
   const handleAmountClick = (amount: number) => {
@@ -89,36 +88,42 @@ export default function BuyMeACoffeePage() {
                 <FormItem>
                   <FormLabel>Amount in Rupees</FormLabel>
                   <FormControl>
-                    <Input {...field} name="amount" type = "number" placeholder="Amount" />
+                    <Input
+                      {...field}
+                      name="amount"
+                      type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="Amount"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <div className="flex items-center space-x-5">
-            <span className="text-gray-700">Select Amount:</span>
-            <Button
-                  variant="outline"
-                  className="mb-2"
-                  onClick={() => handleAmountClick(100)}
-                >
-                  100
-                </Button>
-                <Button
-                 
-                  variant="outline"
-                  className="mb-2"
-                  onClick={() => handleAmountClick(200)}
-                >
-                  200
-                </Button>
-                <Button
-                  variant="outline"
-                  className="mb-2"
-                  onClick={() => handleAmountClick(500)}
-                >
-                  500
-                </Button>
+              <span className="text-gray-700">Select Amount:</span>
+              <Button
+                variant="outline"
+                className="mb-2"
+                onClick={() => handleAmountClick(100)}
+              >
+                100
+              </Button>
+              <Button
+                variant="outline"
+                className="mb-2"
+                onClick={() => handleAmountClick(200)}
+              >
+                200
+              </Button>
+              <Button
+                variant="outline"
+                className="mb-2"
+                onClick={() => handleAmountClick(500)}
+              >
+                500
+              </Button>
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
@@ -135,7 +140,10 @@ export default function BuyMeACoffeePage() {
         <div className="text-center mt-4">
           <p>
             Go back to{" "}
-            <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
+            <Link
+              href="/dashboard"
+              className="text-blue-600 hover:text-blue-800"
+            >
               Dashboard
             </Link>
           </p>
