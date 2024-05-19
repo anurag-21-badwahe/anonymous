@@ -107,25 +107,26 @@
 //   secret: process.env.NEXTAUTH_SECRET,
 // };
 
-
-import { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
-import dbConnect from '@/lib/dbConnect';
-import UserModel from '@/models/Usermsg';
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import bcrypt from "bcryptjs";
+import dbConnect from "@/lib/dbConnect";
+import UserModel from "@/models/Usermsg";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      id: 'credentials',
-      name: 'Credentials',
+      id: "credentials",
+      name: "Credentials",
       credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
         // console.log("Credentials",credentials);
-        
+
         await dbConnect();
         try {
           const user = await UserModel.findOne({
@@ -135,10 +136,10 @@ export const authOptions: NextAuthOptions = {
             ],
           });
           if (!user) {
-            throw new Error('No user found with this email');
+            throw new Error("No user found with this email");
           }
           if (!user.isVerified) {
-            throw new Error('Please verify your account before logging in');
+            throw new Error("Please verify your account before logging in");
           }
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
@@ -147,12 +148,20 @@ export const authOptions: NextAuthOptions = {
           if (isPasswordCorrect) {
             return user;
           } else {
-            throw new Error('Incorrect password');
+            throw new Error("Incorrect password");
           }
         } catch (err: any) {
           throw new Error(err);
         }
       },
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
   callbacks: {
@@ -174,12 +183,33 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async signIn({ user, email, account }: any): Promise<any> {
+      console.log("Account", account);
+      if (account.provider == "github" || account.provider == "google") {
+        await dbConnect();
+        console.log("Connected to Db for providers");
+
+        const currentUser = await UserModel.findOne({ email: email });
+        console.log("Current User : ", currentUser);
+        if (!currentUser) {
+          const newUser = await UserModel.create({
+            email: user.email,
+            username: user.email.split("@")[0],
+          });
+          user.name = newUser.username;
+        } else {
+          user.name = currentUser.username;
+        }
+        // console.log("user: ",user);
+        return true;
+      }
+    },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/sign-in',
+    signIn: "/dashboard",
   },
 };

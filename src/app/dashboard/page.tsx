@@ -119,7 +119,7 @@ function UserDashboard() {
   };
 
   if (!session || !session.user) {
-    return <div>Please Login</div>;
+    return <div className="flex justify-center items-center min-h-screen"><Loader2 className="bg-red-300"><span className="text-black">Please Login to visit this page</span></Loader2></div>;
   }
 
   const { username } = session.user as User;
