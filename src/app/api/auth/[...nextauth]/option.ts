@@ -183,27 +183,27 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({ user, email, account }: any): Promise<any> {
-      console.log("Account", account);
-      if (account.provider == "github" || account.provider == "google") {
-        await dbConnect();
-        console.log("Connected to Db for providers");
+    // async signIn({ user, email, account }: any): Promise<any> {
+    //   console.log("Account", account);
+    //   if (account.provider == "github" || account.provider == "google") {
+    //     await dbConnect();
+    //     console.log("Connected to Db for providers");
 
-        const currentUser = await UserModel.findOne({ email: email });
-        console.log("Current User : ", currentUser);
-        if (!currentUser) {
-          const newUser = await UserModel.create({
-            email: user.email,
-            username: user.email.split("@")[0],
-          });
-          user.name = newUser.username;
-        } else {
-          user.name = currentUser.username;
-        }
-        // console.log("user: ",user);
-        return true;
-      }
-    },
+    //     const currentUser = await UserModel.findOne({ email: email });
+    //     console.log("Current User : ", currentUser);
+    //     if (!currentUser) {
+    //       const newUser = await UserModel.create({
+    //         email: user.email,
+    //         username: user.email.split("@")[0],
+    //       });
+    //       user.name = newUser.username;
+    //     } else {
+    //       user.name = currentUser.username;
+    //     }
+    //     // console.log("user: ",user);
+    //     return true;
+    //   }
+    // },
   },
   session: {
     strategy: "jwt",

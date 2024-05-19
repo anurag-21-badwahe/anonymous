@@ -2,14 +2,20 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface Payment extends Document {
   username: string;
+  to_user:string,
   message: string;
   amount: number;
-  time: Date;
+  orderId:string;
+  paymentStatus:boolean;
 }
 
 const PaymentSchema: Schema<Payment> = new mongoose.Schema(
   {
     username: {
+      type: String,
+      required: [true, "Username is required"]
+    },
+    to_user:{
       type: String,
       required: [true, "Username is required"]
     },
@@ -20,6 +26,14 @@ const PaymentSchema: Schema<Payment> = new mongoose.Schema(
     amount: {
       type: Number,
       required: [true, "Amount is required"],
+    },
+    orderId:{
+        type: String,
+        required:true   
+    },
+    paymentStatus : {
+        type: Boolean,
+        default:false
     }
   },
   { timestamps: true }

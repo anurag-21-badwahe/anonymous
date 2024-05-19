@@ -27,6 +27,7 @@ export default function RootLayout({
   // const username = session?.user?.name ? session.user.name.split(" ")[0] : "Guest";
   return (
     <html lang="en">
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <AuthProvider>
         <body className={inter.className}>
           {children}
