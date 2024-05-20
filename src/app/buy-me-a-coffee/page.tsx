@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { paymentSchema } from "@/schemas/paymentSchema";
+import { paymentSchema } from "@/schemas/paymentSchema"; 
 import { initiate } from "@/actions/payment";
 import { useSession } from "next-auth/react";
 
