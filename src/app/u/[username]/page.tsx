@@ -195,6 +195,24 @@ export default function SendMessage() {
           <Button>Create Your Account</Button>
         </Link>
       </div>
+      <div className="group fixed bottom-4 right-4 z-50">
+            <Link
+              href="/buy-me-a-coffee"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/buymeacoffee.png"
+                alt="Buy Me a Coffee"
+                className="w-14 h-14"
+                width={14}
+                height={14}
+              />
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black text-white text-xs rounded py-1 px-2 absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                Buy Me a Coffee
+              </span>
+            </Link>
+          </div>
     </div>
   );
 }
