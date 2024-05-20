@@ -15,6 +15,7 @@ declare module 'next-auth' {
     isVerified?: boolean;
     isAcceptingMessages?: boolean;
     username?: string;
+    image?:string;
   }
   interface registerErrorType{
     email?: string;
@@ -29,5 +30,6 @@ declare module 'next-auth/jwt' {
     isVerified?: boolean;
     isAcceptingMessages?: boolean;
     username?: string;
+    image?:string;
   }
 }

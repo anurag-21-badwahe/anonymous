@@ -30,6 +30,7 @@ function UserDashboard() {
   };
 
   const { data: session } = useSession();
+  // console.log("data:",session)
 
   const form = useForm({
     resolver: zodResolver(AcceptMessageSchema),
@@ -121,11 +122,12 @@ function UserDashboard() {
   };
 
   if (!session || !session.user) {
-    return <div className="flex justify-center items-center min-h-screen"><Loader2 className="bg-red-300"><span className="text-black">Please Login to visit this page</span></Loader2></div>;
+    return <div className="flex justify-center items-center min-h-screen flex-col m-6"><Loader2><span className="text-black">Please Login to visit this page</span></Loader2></div>;
   }
+  // const { username } = session.user as User;
 
-  const { username } = session.user as User;
-
+  const name = session?.user?.name ;
+  const username = name ? name.split(' ')[0] : ""
 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/u/${username}`;
@@ -140,7 +142,7 @@ function UserDashboard() {
 
   return (
     <>
-      <Navbar username={username ?? "Guest"} />
+      <Navbar/>
       <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
         <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 

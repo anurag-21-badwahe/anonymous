@@ -7,11 +7,8 @@ import logoIcon from "../../public/logo.jpg";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-interface NavbarProps {
-  username: string;
-}
 
-const Navbar: React.FC<NavbarProps> = ({ username }) => {
+const Navbar= () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -20,8 +17,15 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
     setShowDropdown(!showDropdown);
   };
 
-  const handleLogout = () => {
-    signOut();
+  const handleLogout = async () => {
+    const router = useRouter();
+  
+    await signOut({
+      redirect: false, // Prevent automatic redirect
+      callbackUrl: "/",
+    });
+  
+    // Push to the homepage after signing out
     router.push("/");
   };
 
@@ -29,6 +33,9 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
     router.push("/auth/sign-in");
     // signIn();
   };
+
+  const name = session?.user?.name;
+  const username = name ? name.split(' ')[0] : "" || "Guest"
 
   return (
     <nav className="flex justify-between items-center bg-gray-800 shadow-lg px-6 py-3">
@@ -48,11 +55,11 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
             <Image
               src={session?.user?.image || profileIcon.src}
               alt="Profile Icon"
-              className="w-6 h-6 mr-2"
+              className="w-6 h-6 mr-2"></Image>
               width={24}
               height={24}
             />
-            <span className="mr-2 text-white">{username}</span>
+            <span className="mr-2 text-white">{username ?? "Guest"}</span>
             <svg
               className={`fill-current text-gray-600 h-4 w-4 transition-transform ${
                 showDropdown ? "rotate-180" : ""

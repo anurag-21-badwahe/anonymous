@@ -1,112 +1,3 @@
-// import { NextAuthOptions } from "next-auth";
-// import CredentialsProvider from "next-auth/providers/credentials";
-// import GithubProvider from "next-auth/providers/github";
-// import GoogleProvider from "next-auth/providers/google";
-// import bcrypt from "bcryptjs";
-// import dbConnect from "@/lib/dbConnect";
-// import UserModel from "@/models/Usermsg";
-
-// export const authOptions: NextAuthOptions = {
-//   providers: [
-//     CredentialsProvider({
-//       id: "credentials",
-//       name: "Credentials",
-//       credentials: {
-//         username: { label: "Email", type: "text", placeholder: "Steve Jobs" },
-//         password: { label: "Password", type: "password" },
-//       },
-//       async authorize(credentials: any): Promise<any> {
-//         await dbConnect();
-//         try {
-//           const user = await UserModel.findOne({
-//             $or: [
-//               { email: credentials.identifier },
-//               { username: credentials.identifier },
-//             ],
-//           });
-//           // console.log("User : ",user);
-
-//           // console.log("Cred:",credentials.identifier);
-
-//           if (!user) {
-//             throw new Error("No user found with this email");
-//           }
-//           if (!user.isVerified) {
-//             throw new Error("Please verify your account before login");
-//           }
-//           const isPasswordCorrect = await bcrypt.compare(
-//             credentials.password,
-//             user.password
-//           );
-
-//           if (isPasswordCorrect) {
-//             // console.log("Everything fine")
-//             // console.log("user",user)
-//             return user;
-//           } else {
-//             throw new Error("Incorrect Password");
-//           }
-//         } catch (error: any) {
-//           throw new Error(error);
-//         }
-//       },
-//     }),
-//     GithubProvider({
-//       clientId: process.env.GITHUB_CLIENT_ID as string,
-//       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-//     }),
-//     GoogleProvider({
-//       clientId: process.env.GOOGLE_CLIENT_ID as string,
-//       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-//     }),
-//   ],
-//   callbacks: {
-//     async signIn({ user, email, account }: any): Promise<any> {
-//       if (account.provider == "github" || account.provider == "google") {
-//         await dbConnect();
-//         console.log("Connected to Db for providers");
-
-//         const currentUser = await UserModel.findOne({ email: email });
-//         if (!currentUser) {
-//           const newUser = await UserModel.create({
-//             email: user.email,
-//             username: user.email.split("@")[0],
-//           });
-//           user.name = newUser.username;
-//         } else {
-//           user.name = currentUser.username;
-//         }
-//         return true;
-//       }
-//     },
-//     async jwt({ token, user }) {
-//       if (user) {
-//         token._id = user._id?.toString();
-//         token.isVerified = user.isVerified;
-//         token.isAcceptingMessages = user.isAcceptingMessages;
-//         token.username = user.username;
-//       }
-//       return token;
-//     },
-//     async session({ session, token }) {
-//       if (token) {
-//         session.user._id = token._id;
-//         session.user._id.isVerified = token.isVerified;
-//         session.user.isAcceptingMessages = token.isAcceptingMessages;
-//         session.user.username = token.username;
-//       }
-//       return session;
-//     },
-//   },
-//   pages: {
-//     signIn: "auth/sign-in",
-//   },
-//   session: {
-//     strategy: "jwt",
-//   },
-//   secret: process.env.NEXTAUTH_SECRET,
-// };
-
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
@@ -114,6 +5,38 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/Usermsg";
+import { JWT } from "next-auth/jwt";
+import { Session, User } from "next-auth";
+
+// Extend the default NextAuth JWT interface to include custom fields
+declare module "next-auth/jwt" {
+  interface JWT {
+    _id?: string;
+    isVerified?: boolean;
+    isAcceptingMessages?: boolean;
+    username?: string;
+    name?:string;
+    image?:string;
+    accessToken?: string;
+    githubToken?: string;
+    googleToken?: string;
+  }
+}
+
+// Extend the default NextAuth Session interface to include custom fields
+declare module "next-auth" {
+  interface Session {
+    user: {
+      _id: string;
+      isVerified: boolean;
+      isAcceptingMessages: boolean;
+      username: string;
+    };
+    accessToken?: string;
+    githubToken?: string;
+    googleToken?: string;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -125,8 +48,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
-        // console.log("Credentials",credentials);
-
         await dbConnect();
         try {
           const user = await UserModel.findOne({
@@ -165,45 +86,57 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
+      console.log("callback Profile",profile)
+      await dbConnect();
       if (user) {
         token._id = user._id?.toString(); // Convert ObjectId to string
         token.isVerified = user.isVerified;
         token.isAcceptingMessages = user.isAcceptingMessages;
         token.username = user.username;
       }
+      if (account) {
+        token.accessToken = account.access_token;
+        if (account.provider === "github") {
+          token.githubToken = account.access_token;
+        }
+        if (account.provider === "google") {
+          token.googleToken = account.access_token;
+        }
+
+        // Check if the user already exists in the database
+        let existingUser = await UserModel.findOne({ email: profile?.email });
+        if (!existingUser) {
+          // Create a new user if they don't exist
+          existingUser = await UserModel.create({
+            email: profile?.email,
+            username: profile?.name?.split('@')[0],
+            isVerified: true, 
+            isAcceptingMessages: true,
+          });
+        }
+        token._id = existingUser._id?.toString();
+        token.isVerified = existingUser.isVerified;
+        token.isAcceptingMessages = existingUser.isAcceptingMessages;
+        token.username = existingUser.username;
+      }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user._id = token._id;
-        session.user.isVerified = token.isVerified;
-        session.user.isAcceptingMessages = token.isAcceptingMessages;
-        session.user.username = token.username;
+        session.user._id = token._id!;
+        session.user.isVerified = token.isVerified!;
+        session.user.isAcceptingMessages = token.isAcceptingMessages!;
+        session.user.username = token.username!;
+      }
+      if (token.githubToken) {
+        session.githubToken = token.githubToken;
+      }
+      if (token.googleToken) {
+        session.googleToken = token.googleToken;
       }
       return session;
     },
-    // async signIn({ user, email, account }: any): Promise<any> {
-    //   console.log("Account", account);
-    //   if (account.provider == "github" || account.provider == "google") {
-    //     await dbConnect();
-    //     console.log("Connected to Db for providers");
-
-    //     const currentUser = await UserModel.findOne({ email: email });
-    //     console.log("Current User : ", currentUser);
-    //     if (!currentUser) {
-    //       const newUser = await UserModel.create({
-    //         email: user.email,
-    //         username: user.email.split("@")[0],
-    //       });
-    //       user.name = newUser.username;
-    //     } else {
-    //       user.name = currentUser.username;
-    //     }
-    //     // console.log("user: ",user);
-    //     return true;
-    //   }
-    // },
   },
   session: {
     strategy: "jwt",

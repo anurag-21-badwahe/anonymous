@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Autoplay from "embla-carousel-autoplay";
 import messages from "@/messages.json";
 
+import Navbar from "@/components/Navbar";
 import { useSession, signIn, signOut } from "next-auth/react";
 import {
   Carousel,
@@ -16,16 +17,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Navbar from "@/components/Navbar";
 
 export default function Home() {
-  const { data: session } = useSession();
-  const username = session?.user?.name
-    ? session.user.name.split(" ")[0]
-    : "Guest";
   return (
     <>
-     <Navbar username={username} />
+     <Navbar/>
       {/* Main content */}
       <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 bg-white text-white min-h-screen">
         <section className="text-center mb-8 md:mb-12">
