@@ -49,7 +49,7 @@ const UserSchema: Schema<User> = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      // required: [true, "Password is required"],
     },
     profilePic: {
       type: String,
@@ -59,11 +59,11 @@ const UserSchema: Schema<User> = new mongoose.Schema(
     },
   verifyCode: {
     type: String,
-    required: [true, 'Verify Code is required'],
+    // required: [true, 'Verify Code is required'],
   },
   verifyCodeExpiry: {
     type: Date,
-    required: [true, 'Verify Code Expiry is required'],
+    // required: [true, 'Verify Code Expiry is required'],
   },
   isVerified: {
     type: Boolean,

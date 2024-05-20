@@ -75,7 +75,7 @@ export default function BuyMeACoffeePage() {
         prefill: {
           name: data.name,
           email: session?.user.email,
-          contact: "9000090000",
+          contact: "6268766883",
         },
         notes: {
           address: "Razorpay Corporate Office",
@@ -151,8 +151,7 @@ export default function BuyMeACoffeePage() {
                   <FormControl>
                     <Input
                       {...field}
-                      type="number"
-                      inputMode="numeric"
+                      type="tel"
                       pattern="[0-9]*"
                       placeholder="Amount"
                     />

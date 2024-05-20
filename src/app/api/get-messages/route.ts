@@ -7,11 +7,9 @@ import { authOptions } from '../auth/[...nextauth]/option';
 
 export async function GET(request: Request) {
   await dbConnect();
-  const session = await getServerSession(authOptions);
+  const session:any = await getServerSession(authOptions);
   const _user: User = session?.user;
 
-  // console.log("Session : ",session)
-  // console.log("_user ; ",_user)
 
   if (!session || !_user) {
     return Response.json(
@@ -28,15 +26,18 @@ export async function GET(request: Request) {
       { $group: { _id: '$_id', messages: { $push: '$messages' } } },
     ]).exec();
 
-    if (!user || user.length === 0) {
-      return Response.json(
-        { message: 'User not found', success: false },
-        { status: 404 }
-      );
-    }
+    // if (!user || user.length === 0) {
+    //   return Response.json(
+    //     { message: 'User not found', success: false },
+    //     { status: 404 }
+    //   );
+    // }
+
+
 
     return Response.json(
-      { messages: user[0].messages },
+      
+      { messages: (!user || user.length === 0) ? [] : user[0].messages },
       {
         status: 200,
       }

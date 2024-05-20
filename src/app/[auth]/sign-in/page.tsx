@@ -79,7 +79,6 @@ export default function SignInForm() {
     setIsSubmittingGoogleBtn(true);
     try {
       await signIn("google");
-      // router.replace(`/verify/${username}`);
       router.replace('/dashboard')
       setIsSubmittingGoogleBtn(false);
     } catch (error) {
