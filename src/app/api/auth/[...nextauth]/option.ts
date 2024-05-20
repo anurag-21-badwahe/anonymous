@@ -29,6 +29,8 @@ declare module "next-auth" {
     user: {
       _id: string;
       isVerified: boolean;
+      name?:string;
+      image?:string;
       isAcceptingMessages: boolean;
       username: string;
     };

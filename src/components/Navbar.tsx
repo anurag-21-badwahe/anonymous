@@ -7,8 +7,7 @@ import logoIcon from "../../public/logo.jpg";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-
-const Navbar= () => {
+const Navbar = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -19,12 +18,12 @@ const Navbar= () => {
 
   const handleLogout = async () => {
     const router = useRouter();
-  
+
     await signOut({
       redirect: false, // Prevent automatic redirect
       callbackUrl: "/",
     });
-  
+
     // Push to the homepage after signing out
     router.push("/");
   };
@@ -35,7 +34,7 @@ const Navbar= () => {
   };
 
   const name = session?.user?.name;
-  const username = name ? name.split(' ')[0] : "" || "Guest"
+  const username = name ? name.split(" ")[0] : "" || "Guest";
 
   return (
     <nav className="flex justify-between items-center bg-gray-800 shadow-lg px-6 py-3">
@@ -47,17 +46,19 @@ const Navbar= () => {
           height={40}
           className="w-10 h-10 mr-4"
         />
-        <span className="text-lg font-bold italic text-white mx-5">Feedonymous</span>
+        <span className="text-lg font-bold italic text-white mx-5">
+          Feedonymous
+        </span>
       </div>
       <div className="flex items-center">
         <div className="relative mr-4 cursor-pointer" onClick={toggleDropdown}>
           <div className="flex items-center hover:text-lg">
             <Image
               src={session?.user?.image || profileIcon.src}
-              alt="Profile Icon"
-              className="w-6 h-6 mr-2"></Image>
+              alt="Logo"
               width={24}
               height={24}
+              className="w-24 h-24 mr-4"
             />
             <span className="mr-2 text-white">{username ?? "Guest"}</span>
             <svg
@@ -85,7 +86,7 @@ const Navbar= () => {
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
                     onClick={handleLogin}
                   >
-                   Signin
+                    Signin
                   </li>
                 )}
               </ul>
