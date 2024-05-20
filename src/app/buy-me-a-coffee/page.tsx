@@ -20,6 +20,7 @@ import {
 import { paymentSchema } from "@/schemas/paymentSchema"; 
 import { initiate } from "@/actions/payment";
 import { useSession } from "next-auth/react";
+import adminProfile from "../../../public/admin.jpeg"
 
 const loadRazorpayScript = () => {
   return new Promise((resolve, reject) => {
@@ -43,7 +44,7 @@ export default function BuyMeACoffeePage() {
   const form = useForm<z.infer<typeof paymentSchema>>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
-      name: "",
+      name: "", 
       message: "",
       payment: 100,
     },
@@ -62,12 +63,12 @@ export default function BuyMeACoffeePage() {
       const orderVal = await initiate(data.payment, data.name, paymentData);
       const orderId = orderVal.id;
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Ensure this environment variable is set correctly
+        key: process.env.RAZORPAY_KEY_ID, 
         amount: data.payment * 100, // Amount is in the smallest currency unit (paise for INR)
         currency: "INR",
         name: "Feedonymous",
         description: "Buy Me a Coffee",
-        image: "https://example.com/your_logo",
+        image: adminProfile,
         order_id: orderId,
         callback_url: `${process.env.NEXT_DOMAIN}/api/razorpay`,
         prefill: {
