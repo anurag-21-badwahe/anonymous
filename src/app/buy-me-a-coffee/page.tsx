@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { paymentSchema } from "@/schemas/paymentSchema";
-import Razorpay from 'razorpay';
 import { initiate } from "@/actions/payment";
 import { useSession } from "next-auth/react";
 
@@ -38,7 +37,7 @@ const loadRazorpayScript = () => {
 
 export default function BuyMeACoffeePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentform, setPaymentform] = useState({});
+  const [paymentForm, setPaymentForm] = useState({});
   const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof paymentSchema>>({
@@ -52,23 +51,25 @@ export default function BuyMeACoffeePage() {
 
   const onSubmit = async (data: z.infer<typeof paymentSchema>) => {
     setIsSubmitting(true);
-    setPaymentform(data);
+    setPaymentForm(data);
+
     const paymentData = {
       username: data.name,
-      message: data.message
+      message: data.message,
     };
+
     try {
       const orderVal = await initiate(data.payment, data.name, paymentData);
       const orderId = orderVal.id;
       const options = {
-        key: process.env.NEXT_DOMAIN, // Ensure this environment variable is set correctly
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Ensure this environment variable is set correctly
         amount: data.payment * 100, // Amount is in the smallest currency unit (paise for INR)
         currency: "INR",
-        name: "Your Business Name",
+        name: "Feedonymous",
         description: "Buy Me a Coffee",
         image: "https://example.com/your_logo",
         order_id: orderId,
-        callback_url: `${process.env.NEXT_PUBLIC_DOMAIN}/api/razorpay`,
+        callback_url: `${process.env.NEXT_DOMAIN}/api/razorpay`,
         prefill: {
           name: data.name,
           email: session?.user.email,
@@ -82,8 +83,13 @@ export default function BuyMeACoffeePage() {
         },
       };
 
-      const rzp1 = new (window as any).Razorpay(options);
-      rzp1.open();
+      const scriptLoaded = await loadRazorpayScript();
+      if (scriptLoaded) {
+        const rzp1 = new (window as any).Razorpay(options);
+        rzp1.open();
+      } else {
+        console.error("Failed to load Razorpay SDK");
+      }
     } catch (error) {
       console.error("Error during payment initiation:", error);
     } finally {
@@ -94,7 +100,6 @@ export default function BuyMeACoffeePage() {
   const handleAmountClick = (amount: number) => {
     form.setValue("payment", amount);
   };
-
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
