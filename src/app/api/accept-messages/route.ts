@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   // Connect to the database
   await dbConnect();
 
-  const session = await getServerSession(authOptions);
+  const session:any = await getServerSession(authOptions);
   const user: User = session?.user;
   if (!session || !session.user) {
     return Response.json(

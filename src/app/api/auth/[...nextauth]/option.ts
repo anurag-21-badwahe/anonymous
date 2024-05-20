@@ -17,6 +17,7 @@ declare module "next-auth/jwt" {
     username?: string;
     name?:string;
     image?:string;
+    user?:string;
     accessToken?: string;
     githubToken?: string;
     googleToken?: string;
@@ -31,6 +32,7 @@ declare module "next-auth" {
       isVerified: boolean;
       name?:string;
       image?:string;
+      user?:string;
       isAcceptingMessages: boolean;
       username: string;
     };
