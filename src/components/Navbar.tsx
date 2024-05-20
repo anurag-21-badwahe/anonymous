@@ -17,9 +17,7 @@ const Navbar = () => {
   };
 
   const handleLogout = async () => {
-    const router = useRouter();
-
-    await signOut({
+      await signOut({
       redirect: false, // Prevent automatic redirect
       callbackUrl: "/",
     });
