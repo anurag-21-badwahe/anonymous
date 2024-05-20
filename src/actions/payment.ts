@@ -44,6 +44,7 @@ import UserModel from "@/models/Usermsg";
 
 type InitiateResponse = {
   id: string;
+  key_id:string
 };
 
 export const initiate = async (
@@ -53,11 +54,17 @@ export const initiate = async (
 ): Promise<InitiateResponse> => {
   await dbConnect();
 
-  const instance = new Razorpay({
-    key_id: process.env.LIVE_PAYMENT_KEY_ID,
-    key_secret: process.env.LIVE_PAYMENT_KEY_SECRET,
-  });
+  const key_id = process.env.LIVE_PAYMENT_KEY_ID;
+  const key_secret = process.env.LIVE_PAYMENT_KEY_SECRET;
 
+  if (!key_id || !key_secret) {
+    throw new Error("Razorpay key_id or key_secret is not defined in environment variables");
+  }
+
+  const instance = new Razorpay({
+    key_id,
+    key_secret,
+  });
   const options = {
     amount: amount * 100, // Amount in smallest currency unit (paise for INR)
     currency: "INR",
