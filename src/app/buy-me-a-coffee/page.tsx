@@ -21,6 +21,7 @@ import { paymentSchema } from "@/schemas/paymentSchema";
 import { initiate } from "@/actions/payment";
 import { useSession } from "next-auth/react";
 import adminProfile from "../../../public/admin.jpeg"
+import { BASE_URL } from "../../config.js";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve, reject) => {
@@ -70,7 +71,7 @@ export default function BuyMeACoffeePage() {
         description: "Buy Me a Coffee",
         image: adminProfile,
         order_id: orderId,
-        callback_url: `${process.env.NEXT_DOMAIN}/api/razorpay`,
+        callback_url: `${BASE_URL}/api/razorpay`,
         prefill: {
           name: data.name,
           email: session?.user.email,
