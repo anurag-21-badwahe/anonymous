@@ -21,7 +21,7 @@ import { paymentSchema } from "@/schemas/paymentSchema";
 import { initiate } from "@/actions/payment";
 import { useSession } from "next-auth/react";
 import adminProfile from "../../../public/admin.jpeg"
-import { BASE_URL } from "../../config.js";
+import { BASE_URL } from "../../config.ts";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve, reject) => {
