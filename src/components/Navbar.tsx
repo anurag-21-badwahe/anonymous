@@ -54,9 +54,9 @@ const Navbar = () => {
             <Image
               src={session?.user?.image || profileIcon.src}
               alt="Logo"
-              width={24}
-              height={24}
-              className="w-24 h-24 mr-4"
+              width={40}
+              height={40}
+              className="mr-4 rounded-full"
             />
             <span className="mr-2 text-white">{username ?? "Guest"}</span>
             <svg

@@ -15,10 +15,10 @@ declare module "next-auth/jwt" {
     isVerified?: boolean;
     isAcceptingMessages?: boolean;
     username?: string;
-    name?:string;
-    image?:string;
-    user?:string;
-    email?:string;
+    name?: string;
+    image?: string;
+    user?: string;
+    email?: string;
     accessToken?: string;
     githubToken?: string;
     googleToken?: string;
@@ -31,10 +31,10 @@ declare module "next-auth" {
     user: {
       _id: string;
       isVerified: boolean;
-      name?:string;
-      image?:string;
-      user?:string;
-      email?:string;
+      name?: string;
+      image?: string;
+      user?: string;
+      email?: string;
       isAcceptingMessages: boolean;
       username: string;
     };
@@ -92,24 +92,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
-      if (token) {
-        session.user._id = token._id!;
-        session.user.isVerified = token.isVerified!;
-        session.user.isAcceptingMessages = token.isAcceptingMessages!;
-        session.user.username = token.username!;
-      }
-      if (token.githubToken) {
-        session.githubToken = token.githubToken;
-      }
-      if (token.googleToken) {
-        session.googleToken = token.googleToken;
-      }
-      return session;
-    },
     async jwt({ token, user, account, profile }) {
-      
-      console.log("callback Profile",{profile,user,account,token})
+      console.log("callback Profile", { profile, user, account, token });
       await dbConnect();
       if (user) {
         token._id = user._id?.toString(); // Convert ObjectId to string
@@ -117,6 +101,13 @@ export const authOptions: NextAuthOptions = {
         token.isAcceptingMessages = user.isAcceptingMessages;
         token.username = user.username;
       }
+
+      if (token) {
+        const firstName = token?.name?.split(" ")[0];
+        const randomChars = Math.random().toString(36).substring(2, 5);
+        token.username = `${firstName}${randomChars}`;
+      }
+
       if (account) {
         token.accessToken = account.access_token;
         if (account.provider === "github") {
@@ -132,19 +123,44 @@ export const authOptions: NextAuthOptions = {
           // Create a new user if they don't exist
           existingUser = await UserModel.create({
             email: profile?.email,
-            username: profile?.name?.split(' ')[0],
-            password:await bcrypt.hash("RandomPass", 10),
-            isVerified: true, 
+            username: profile?.email?.split("@")[0],
+            password: await bcrypt.hash(process.env.RANDOM_PASS!, 10),
+            isVerified: true,
             isAcceptingMessages: true,
           });
+        } else {
+          await UserModel.updateOne(
+            { email: profile?.email },
+            {
+              username: profile?.email?.split("@")[0],
+              password: await bcrypt.hash(process.env.RANDOM_PASS!, 10),
+              isVerified: true,
+              isAcceptingMessages: true,
+            }
+          );
         }
-        console.log("Exiting User:",existingUser)
+        console.log("Exiting User:", existingUser);
         token._id = existingUser._id?.toString();
         token.isVerified = existingUser.isVerified;
         token.isAcceptingMessages = existingUser.isAcceptingMessages;
         token.username = existingUser.username;
       }
       return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token._id!;
+        session.user.isVerified = token.isVerified!;
+        session.user.isAcceptingMessages = token.isAcceptingMessages!;
+        session.user.username = token.username!;
+      }
+      if (token.githubToken) {
+        session.githubToken = token.githubToken;
+      }
+      if (token.googleToken) {
+        session.googleToken = token.googleToken;
+      }
+      return session;
     },
   },
   session: {

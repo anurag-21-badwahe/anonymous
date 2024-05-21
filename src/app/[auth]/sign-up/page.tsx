@@ -96,7 +96,7 @@ export default function SignUpForm() {
       await signIn("github");
       // router.replace(`/verify/${username}`);
       router.replace('/dashboard')
-      setIsSubmittingGithubBtn(false);
+      // setIsSubmittingGithubBtn(false);
     } catch (error) {
       console.error("Error during GitHub sign-in:", error);
       toast({

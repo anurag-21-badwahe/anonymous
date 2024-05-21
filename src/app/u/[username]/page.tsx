@@ -198,7 +198,7 @@ export default function SendMessage() {
       <div className="group fixed bottom-4 right-4 z-50">
             <Link
               href="/buy-me-a-coffee"
-              target="_blank"
+              // target="_blank"
               rel="noopener noreferrer"
             >
               <Image

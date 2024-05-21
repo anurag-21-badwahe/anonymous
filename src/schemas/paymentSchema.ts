@@ -1,9 +1,19 @@
-import { z } from "zod";
+import { z, ZodTypeAny } from "zod";
 
+export const numericString = (schema: ZodTypeAny) =>
+  z.preprocess((a) => {
+    if (typeof a === "string") {
+      return parseInt(a, 10);
+    } else if (typeof a === "number") {
+      return a;
+    } else {
+      return undefined;
+    }
+  }, schema);
 
-
-
-
+const FindMany = z.object({
+  take: numericString(z.number()),
+});
 
 export const usernameValidation = z
   .string()
@@ -18,9 +28,5 @@ export const paymentSchema = z.object({
     .string()
     .min(10, { message: "Message must be at least 10 characters." })
     .max(300, { message: "Message must not be longer than 300 characters." }),
-    payment: z
-    .number()
-    .positive()
-    .refine((val) => val > 10, { message: "Amount must be greater than 10" }),
+  payment:numericString(z.number().positive())
 });
-
