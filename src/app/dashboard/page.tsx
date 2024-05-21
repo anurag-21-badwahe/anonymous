@@ -126,7 +126,7 @@ function UserDashboard() {
   }
   // const { username } = session.user as User;
 
-  const name = session?.user?.name ;
+  const name = session?.user?.username ;
   const username = name ? name.split(' ')[0] : ""
 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;

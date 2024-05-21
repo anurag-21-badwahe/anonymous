@@ -22,9 +22,9 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
-  console.log("tokennn",token?.googleToken)
-  console.log(" giti tokennn",token?.githubToken)
 
+
+  console.log("tokennnn",token)
   if (!token && url.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }

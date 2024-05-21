@@ -5,44 +5,6 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/Usermsg";
-import { JWT } from "next-auth/jwt";
-import { Session, User } from "next-auth";
-
-// Extend the default NextAuth JWT interface to include custom fields
-declare module "next-auth/jwt" {
-  interface JWT {
-    _id?: string;
-    isVerified?: boolean;
-    isAcceptingMessages?: boolean;
-    username?: string;
-    name?: string;
-    image?: string;
-    user?: string;
-    email?: string;
-    accessToken?: string;
-    githubToken?: string;
-    googleToken?: string;
-  }
-}
-
-// Extend the default NextAuth Session interface to include custom fields
-declare module "next-auth" {
-  interface Session {
-    user: {
-      _id: string;
-      isVerified: boolean;
-      name?: string;
-      image?: string;
-      user?: string;
-      email?: string;
-      isAcceptingMessages: boolean;
-      username: string;
-    };
-    accessToken?: string;
-    githubToken?: string;
-    googleToken?: string;
-  }
-}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -92,75 +54,82 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      console.log("callback Profile", { profile, user, account, token });
+    async signIn({ user, account, profile }) {
       await dbConnect();
-      if (user) {
-        token._id = user._id?.toString(); // Convert ObjectId to string
-        token.isVerified = user.isVerified;
-        token.isAcceptingMessages = user.isAcceptingMessages;
-        token.username = user.username;
-      }
-
-      if (token) {
-        const firstName = token?.name?.split(" ")[0];
-        const randomChars = Math.random().toString(36).substring(2, 5);
-        token.username = `${firstName}${randomChars}`;
-      }
-
-      if (account) {
-        token.accessToken = account.access_token;
-        if (account.provider === "github") {
-          token.githubToken = account.access_token;
-        }
-        if (account.provider === "google") {
-          token.googleToken = account.access_token;
-        }
-
-        // Check if the user already exists in the database
+      console.log("Sign-in callback", { user, account, profile });
+      if (account?.provider === "google" || account?.provider === "github") {
         let existingUser = await UserModel.findOne({ email: profile?.email });
+        let newUsername;
         if (!existingUser) {
-          // Create a new user if they don't exist
+          if (account.provider === "google") {
+            const firstName = profile?.email?.split("@")[0];
+            newUsername = `${firstName}gg`;
+          } else if (account.provider === "github") {
+            const firstName = profile?.email?.split("@")[0];
+            newUsername = `${firstName}gt`;
+          }
+          // console.log("New user",newUsername)
           existingUser = await UserModel.create({
             email: profile?.email,
-            username: profile?.email?.split("@")[0],
+            username: newUsername,
             password: await bcrypt.hash(process.env.RANDOM_PASS!, 10),
             isVerified: true,
             isAcceptingMessages: true,
           });
         } else {
+          // console.log("New user",newUsername)
+          if (account.provider === "google") {
+            const firstName = profile?.email?.split("@")[0];
+            newUsername = `${firstName}gg`;
+          } else if (account.provider === "github") {
+            const firstName = profile?.email?.split("@")[0];
+            newUsername = `${firstName}gt`;
+          }
           await UserModel.updateOne(
             { email: profile?.email },
             {
-              username: profile?.email?.split("@")[0],
+              username: newUsername,
               password: await bcrypt.hash(process.env.RANDOM_PASS!, 10),
               isVerified: true,
               isAcceptingMessages: true,
             }
           );
         }
-        console.log("Exiting User:", existingUser);
-        token._id = existingUser._id?.toString();
-        token.isVerified = existingUser.isVerified;
-        token.isAcceptingMessages = existingUser.isAcceptingMessages;
-        token.username = existingUser.username;
+        // Extend the user object with additional properties
+        user._id = existingUser._id;
+        user.isVerified = existingUser.isVerified;
+        user.isAcceptingMessages = existingUser.isAcceptingMessages;
+        user.username = existingUser.username;
+      }
+      return true;
+    },
+
+    async jwt({ token, user }) {
+      console.log("Callback jwt", { token, user });
+      if (user) {
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.isAcceptingMessages = user.isAcceptingMessages;
+        token.username = user.username;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user._id = token._id!;
-        session.user.isVerified = token.isVerified!;
-        session.user.isAcceptingMessages = token.isAcceptingMessages!;
-        session.user.username = token.username!;
-      }
-      if (token.githubToken) {
-        session.githubToken = token.githubToken;
-      }
-      if (token.googleToken) {
-        session.googleToken = token.googleToken;
+        session.user._id = token._id;
+        session.user.isVerified = token.isVerified;
+        session.user.isAcceptingMessages = token.isAcceptingMessages;
+        session.user.username = token.username;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith(baseUrl)) {
+        return `${baseUrl}/dashboard`;
+      } else if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
+      return baseUrl;
     },
   },
   session: {
@@ -168,6 +137,6 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/dashboard",
+    signIn: "/sign-in",
   },
 };

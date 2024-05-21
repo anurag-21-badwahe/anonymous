@@ -31,7 +31,7 @@ const Navbar = () => {
     // signIn();
   };
 
-  const name = session?.user?.name;
+  const name = session?.user?.username;
   const username = name ? name.split(" ")[0] : "" || "Guest";
 
   return (
