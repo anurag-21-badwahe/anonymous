@@ -71,7 +71,7 @@ export default function BuyMeACoffeePage() {
         description: "Buy Me a Coffee",
         image: adminProfile,
         order_id: orderId,
-        callback_url: `${BASE_URL}/api/razorpay`,
+        callback_url: `${BASE_URL}/buy-me-a-coffee`,
         prefill: {
           name: data.name,
           email: session?.user.email,
