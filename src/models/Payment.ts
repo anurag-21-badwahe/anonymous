@@ -2,22 +2,22 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface Payment extends Document {
   username: string;
-  to_user:string,
+  to_user: string;
   message: string;
   amount: number;
-  orderId:string;
-  paymentStatus:boolean;
+  orderId: string;
+  paymentStatus: string;
 }
 
 const PaymentSchema: Schema<Payment> = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: [true, "Username is required"]
+      required: [true, "Username is required"],
     },
-    to_user:{
+    to_user: {
       type: String,
-      required: [true, "Username is required"]
+      required: [true, "Username is required"],
     },
     message: {
       type: String,
@@ -27,14 +27,11 @@ const PaymentSchema: Schema<Payment> = new mongoose.Schema(
       type: Number,
       required: [true, "Amount is required"],
     },
-    orderId:{
-        type: String,
-        required:true   
+    orderId: {
+      type: String,
+      required: true,
     },
-    paymentStatus : {
-        type: Boolean,
-        default:false
-    }
+    paymentStatus: { type: String, default: "pending" },
   },
   { timestamps: true }
 );

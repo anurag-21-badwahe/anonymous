@@ -22,6 +22,7 @@ import { initiate } from "@/actions/payment";
 import { useSession } from "next-auth/react";
 import adminProfile from "../../../public/admin.jpeg"
 import { BASE_URL } from "../../config.ts";
+import { useRouter } from "next/navigation";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve, reject) => {
@@ -41,6 +42,7 @@ export default function BuyMeACoffeePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentForm, setPaymentForm] = useState({});
   const { data: session } = useSession();
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof paymentSchema>>({
     resolver: zodResolver(paymentSchema),
@@ -72,6 +74,27 @@ export default function BuyMeACoffeePage() {
         image: adminProfile,
         order_id: orderId,
         callback_url: `${BASE_URL}/buy-me-a-coffee`,
+        handler: async function (response:any) {
+          // if (response.length==0) return <Loading/>;
+          console.log("Reponse",response);
+  
+          const data = await fetch(`${BASE_URL}/api/verifyPayment`, {
+            method: "POST",
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });  
+         const res = await data.json();
+          console.log("response verify==",res)
+  
+          if(res?.message=="success")
+          {
+            console.log("redirected.......")
+            router.push("/paymentsuccess?paymentid="+response.razorpay_payment_id)
+          }
+        },
         prefill: {
           name: data.name,
           email: session?.user.email,

@@ -32,7 +32,7 @@ export const initiate = async (
   const options = {
     amount: amount * 100, // Amount in smallest currency unit (paise for INR)
     currency: "INR",
-    receipt: `receipt_${Date.now()}`, // Adding a receipt identifier
+    receipt: `receipt_${Date.now()}`, 
   };
 
   const order = await instance.orders.create(options);
@@ -40,7 +40,7 @@ export const initiate = async (
   await PaymentModel.create({
     orderId: order.id,
     amount: amount,
-    to_user: to_username,
+    to_user: "Anurag Badwahe",
     username: paymentform.username,
     message: paymentform.message,
   });
