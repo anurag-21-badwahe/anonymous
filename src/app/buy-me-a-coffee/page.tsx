@@ -74,27 +74,27 @@ export default function BuyMeACoffeePage() {
         image: adminProfile,
         order_id: orderId,
         callback_url: `${BASE_URL}/buy-me-a-coffee`,
-        handler: async function (response:any) {
-          // if (response.length==0) return <Loading/>;
-          console.log("Reponse",response);
+        // handler: async function (response:any) {
+        //   // if (response.length==0) return <Loading/>;
+        //   console.log("Reponse",response);
   
-          const data = await fetch(`${BASE_URL}/api/verifyPayment`, {
-            method: "POST",
-            body: JSON.stringify({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          });  
-         const res = await data.json();
-          console.log("response verify==",res)
+        //   const data = await fetch(`${BASE_URL}/api/verifyPayment`, {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //       razorpay_payment_id: response.razorpay_payment_id,
+        //       razorpay_order_id: response.razorpay_order_id,
+        //       razorpay_signature: response.razorpay_signature,
+        //     }),
+        //   });  
+        //  const res = await data.json();
+        //   console.log("response verify==",res)
   
-          if(res?.message=="success")
-          {
-            console.log("redirected.......")
-            router.push("/paymentsuccess?paymentid="+response.razorpay_payment_id)
-          }
-        },
+        //   if(res?.message=="success")
+        //   {
+        //     console.log("redirected.......")
+        //     router.push("/paymentsuccess?paymentid="+response.razorpay_payment_id)
+        //   }
+        // },
         prefill: {
           name: data.name,
           email: session?.user.email,
