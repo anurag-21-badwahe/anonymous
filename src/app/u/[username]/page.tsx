@@ -161,7 +161,7 @@ export default function SendMessage() {
           <CardHeader>
             <h3 className="text-xl font-semibold">Messages</h3>
           </CardHeader>
-          <CardContent className="flex flex-col space-y-4 justify-center w-full overflow-hidden">
+          <CardContent className="flex flex-col space-y-4 input input-bordered w-full p-2 mr-2">
             {isSuggestLoading ? (
               <>
                 <Skeleton className="w-full h-[20px] rounded-full bg-slate-400" />
