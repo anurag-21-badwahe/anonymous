@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast";
 import { signInSchema } from "@/schemas/signinSchema";
 import googleIcon from "../../../../public/googleIcon.png";
@@ -36,6 +37,7 @@ export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmittingGoogleBtn, setIsSubmittingGoogleBtn] = useState(false);
   const [isSubmittingGithubBtn, setIsSubmittingGithubBtn] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const { toast } = useToast();
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
@@ -72,6 +74,10 @@ export default function SignInForm() {
       router.replace("/dashboard");
     }
     setIsSubmitting(false);
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
  
   
@@ -135,13 +141,29 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
-            <FormField
+           <FormField
               name="password"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" {...field} placeholder="password" />
+                  <div className="relative">
+                    <Input
+                      type={passwordVisible ? "text" : "password"}
+                      {...field}
+                      placeholder="password"
+                    />
+                    <div
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {passwordVisible ? (
+                        <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5 text-gray-500" />
+                      )}
+                    </div>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
