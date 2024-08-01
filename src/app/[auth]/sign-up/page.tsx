@@ -201,7 +201,7 @@ export default function SignUpForm() {
                     name="email"
                     placeholder="stevejobs@gmail.com"
                   />
-                  <p className="text-muted text-gray-400 text-sm">
+                  <p className="text-muted text-blue-400 text-sm">
                     We will send you a verification code
                   </p>
                   <FormMessage />
