@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   }
 
 
-  console.log("tokennnn",token)
+  // console.log("tokennnn",token)
   if (!token && url.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }

@@ -49,7 +49,7 @@ export default function SignInForm() {
       identifier: data.identifier,
       password: data.password,
     });
-    console.log("Result :", result);
+    // console.log("Result :", result);
     // console.log("Data :", data.identifier);
     // console.log("Data pass:", data.password);
 
@@ -70,7 +70,7 @@ export default function SignInForm() {
     }
 
     if (result?.url) {
-      console.log("Success");
+      // console.log("Success");
       router.replace("/dashboard");
     }
     setIsSubmitting(false);
